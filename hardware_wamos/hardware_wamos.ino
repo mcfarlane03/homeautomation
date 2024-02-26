@@ -1,19 +1,22 @@
 
 #include <SoftwareSerial.h>
 // IMPORT ALL REQUIRED LIBRARIES
-
+#include <NewPing.h>
+#include <ArduinoJson.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
    
 //**********ENTER IP ADDRESS OF SERVER******************//
 
-#define HOST_IP     "localhost"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     "192.168.100.2"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
-#define idNumber    "620012345"       // REPLACE WITH YOUR ID NUMBER 
+#define idNumber    "620156144"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "YOUR WIFI"      // "REPLACE WITH YOUR WIFI's SSID"   
-#define password    "YOUR PASSWORD"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
+#define SSID        "sandra"      // "REPLACE WITH YOUR WIFI's SSID"   
+#define password    "lui2nick"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
 
 #define stay        100
  
@@ -24,19 +27,33 @@
 #define espTX         11
 #define espTimeout_ms 300
 
+#define TRIGGER_PIN 6
+#define ECHO_PIN 7
  
+#define dia 61.5
+#define max_height 77.763
  
 /* Declare your functions below */
+
+void espInit();
+void espSend(char command[] );
+void espUpdate(char mssg[]);
+double getWaterHeight();
+
  
  
 
 SoftwareSerial esp(espRX, espTX); 
+NewPing sonar(TRIGGER_PIN, ECHO_PIN,1000); 
+
  
 
 void setup(){
 
   Serial.begin(115200); 
   // Configure GPIO pins here
+  pinMode(espRX, INPUT_PULLUP);
+  pinMode(espTX, OUTPUT);
 
  
 
@@ -47,6 +64,31 @@ void setup(){
 void loop(){ 
    
   // send updates with schema ‘{"id": "student_id", "type": "ultrasonic", "radar": 0, "waterheight": 0, "reserve": 0, "percentage": 0}’
+  double radar = sonar.ping_in();
+  double waterHeight = radar - 16.737;
+
+  double reserve = M_PI * pow(dia/2,2) * max_height;
+  double percentage = (waterHeight / max_height) * 100;
+  
+  StaticJsonDocument<290> doc;
+  char mssg[290] = {0};
+
+  Serial.println(radar);
+
+  doc["id"] = idNumber;
+  doc["type"] = "ultrasonic";
+  doc["radar"] = radar;
+  doc["waterheight"] = waterHeight;
+  doc["reserve"] = reserve;
+  doc["percentage"] = percentage;
+
+  serializeJson(doc, mssg);
+
+  // snprintf(mssg,sizeof(mssg),"{\"id\": \"%s\", \"type\": \"ultrasonic\", \"radar\": 0, \"waterheight\": %.2f, \"reserve\": %.2f, \"percentage\": %.2f}",idNumber,waterHeight,reserve,percentage);
+
+  // Serial.println(mssg);
+  espUpdate(mssg);
+  
 
 
 
@@ -105,5 +147,4 @@ void espInit(){
 }
 
 //***** Design and implement all util functions below ******
- 
 

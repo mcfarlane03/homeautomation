@@ -30,5 +30,6 @@ void loop(void) {
   tft.setCursor(20, 55);
   tft.print(value);
   value++;
+  Serial.println(value);
   delay(1000);
 }
