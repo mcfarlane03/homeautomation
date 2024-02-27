@@ -57,6 +57,7 @@ class DB:
         ''' Insert data into the radar collection '''
         try:
             # Insert data into the radar collection
+
             remotedb = self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result = remotedb.ELET2415.radar.insert_one(data)
         except Exception as e:
@@ -79,7 +80,7 @@ class DB:
             print(f"retrieve_radar() error: {e}")
             return False
         else:
-            return list(result)
+            return result
 
 
     # 3. CREATE A FUNCTION TO COMPUTE THE ARITHMETIC AVERAGE ON THE 'reserve' FEILED/VARIABLE, USING ALL DOCUMENTS FOUND BETWEEN SPECIFIED START AND END TIMESTAMPS. RETURNS A LIST WITH A SINGLE OBJECT INSIDE
@@ -90,12 +91,17 @@ class DB:
             end = int(end)
 
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = remotedb.ELET2415.radar.aggregate([{"$match": {"timestamp": {"$gte": start, "$lte": end}}}, {"$group": {"_id": None, "average": {"$avg": "$reserve"}, "$project": {"_id":0, "average":1}}}])
+            result      = result = remotedb.ELET2415.radar.aggregate([
+                                                                    {"$match": {"timestamp": {"$gte": start, "$lte": end}}},
+                                                                    {"$group": {"_id": None, "average": {"$avg": "$reserve"}}},
+                                                                    {"$project": {"_id": 0, "average": 1}}
+                                                                    ])
+
         except Exception as e:
             print(f"average_radar() error: {e}")
             return False
         else:
-            return list(result)
+            return result
     
     
     # 4. CREATE A FUNCTION THAT INSERT/UPDATE A SINGLE DOCUMENT IN THE 'code' COLLECTION WITH THE PROVIDED PASSCODE

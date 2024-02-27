@@ -204,21 +204,29 @@
       const data = await AppStore.getRetrieveData(startDate, endDate);
       // Create arrays for each plot
       let reserve = [];
+      let waterheight = [];
 
    
       // Iterate through data variable and transform object to format recognized by highcharts
      
-      data.forEach((row) => {
-        reserve.push({
-          x: row.timestamp * 1000,
-          y: parseFloat(row.reserve.toFixed(2)),
-        });
-        waterheight.push({
-          x: row.timestamp * 1000,
-          y: parseFloat(row.waterheight.toFixed(2)),
-        });
+      // data.forEach((row) => {
+      //   // console.log(row);
+      //   reserve.push({
+      //     x: row.timestamp * 1000,
+      //     y: parseFloat(row.reserve.toFixed(2)),
+      //   });
+      //   waterheight.push({
+      //     x: row.timestamp * 1000,
+      //     y: parseFloat(row.waterheight.toFixed(2)),
+      //   });
         
-      });
+      // });
+
+      data.forEach((row) => {
+      console.log(row); // Log the row object to inspect its structure
+    // Other code to populate reserve and waterheight arrays
+});
+
       console.log(reserve);
       console.log(waterheight);
       // Add data to Temperature and Heat Index chart
@@ -231,17 +239,23 @@
   const updateCards = async () => {
     // Retrieve Min, Max, Avg, Spread/Range
     if (!!start.value && !!end.value) {
-      // 1. Convert start and end dates collected fron TextFields to 10 digit timestamps
-      let startDate = new Date(start.value).getTime() / 1000;
-      let endDate = new Date(end.value).getTime() / 1000;
-      // 2. Fetch data from backend by calling the API functions
-      const average = await AppStore.getCalculateAvg(startDate, endDate);
-      console.log(average);
-      avg.value = average[0].average.toFixed(1);
-      
-   
+        let startDate = new Date(start.value).getTime() / 1000;
+        let endDate = new Date(end.value).getTime() / 1000;
+        
+        try {
+            const average = await AppStore.getCalculateAvg(startDate, endDate);
+            if (average && average.length > 0 && average[0].hasOwnProperty('average')) {
+                avg.value = average[0].average.toFixed(1);
+            } else {
+                console.log(average)
+                console.error("Invalid data format or empty result from API call.");
+            }
+        } catch (error) {
+            console.error("Error fetching data from the backend:", error);
+        }
     }
-  };
+};
+
   
   
   const updateScatter = async () => {

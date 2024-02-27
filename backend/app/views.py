@@ -6,8 +6,6 @@ This file creates your application.
 """
 
 # from crypt import methods
-import site 
-import json
 
 from app import app, Config,  mongo, Mqtt
 from flask import escape, render_template, request, jsonify, send_file, redirect, make_response, send_from_directory 
@@ -81,9 +79,9 @@ def update_radar():
             timestamp = floor(timestamp)
             jsonDoc['timestamp'] = timestamp
 
-            Mqtt.publish("620156144",json.dumps(jsonDoc))
-            Mqtt.publish("620156144_pub",json.dumps(jsonDoc))
-            Mqtt.publish("620156144_sub",json.dumps(jsonDoc))
+            Mqtt.publish("620156144",mongo.dumps(jsonDoc))
+            # Mqtt.publish("620156144_pub",mongo.dumps(jsonDoc))
+            Mqtt.publish("620156144_sub",mongo.dumps(jsonDoc))
 
             print(f"MQTT: {jsonDoc}")
 
@@ -104,7 +102,7 @@ def get_reserve_radar(start, end):
             start = int(start)
             end = int(end)
 
-            result = mongo.retrieve_radar(start,end)
+            result = list(mongo.retrieve_radar(start,end))
             if result:
                 return jsonify({"status":"success","data":result})
         except Exception as e:

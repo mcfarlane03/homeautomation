@@ -52,8 +52,6 @@ void setup(){
 
   Serial.begin(115200); 
   // Configure GPIO pins here
-  pinMode(espRX, INPUT_PULLUP);
-  pinMode(espTX, OUTPUT);
 
  
 
