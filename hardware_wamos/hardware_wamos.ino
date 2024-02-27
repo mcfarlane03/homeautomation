@@ -30,9 +30,10 @@
 #define TRIGGER_PIN 6
 #define ECHO_PIN 7
  
-#define dia 61.5
+//other definitions
+#define rad 30.75
 #define max_height 77.763
- 
+
 /* Declare your functions below */
 
 void espInit();
@@ -65,7 +66,7 @@ void loop(){
   double radar = sonar.ping_in();
   double waterHeight = radar - 16.737;
 
-  double reserve = M_PI * pow(dia/2,2) * max_height;
+  double reserve = calcReserve(waterHeight);
   double percentage = (waterHeight / max_height) * 100;
   
   StaticJsonDocument<290> doc;
@@ -146,3 +147,6 @@ void espInit(){
 
 //***** Design and implement all util functions below ******
 
+double calcReserve(float height){
+  return (M_PI * pow(rad,2) * height) / 231.0
+}
