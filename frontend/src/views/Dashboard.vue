@@ -86,6 +86,7 @@
   const port= ref(9002);
   const point= ref(10);
   const shift= ref(false);
+  let isActive = ref(false);
 
   const percentage= computed(()=>{
     if(!!payload.value){
@@ -127,7 +128,7 @@
       series: [
         {
           name: "Water",
-          type: "area",
+          type: "column",
           data: [1],
           turboThreshold: 0,
           color: Highcharts.getOptions().colors[0],
@@ -211,8 +212,34 @@
 
 
   watch(payload, (data) => {
-    fm.setPercentage(data.percentage.toFixed(2));
-    slider1.value = data.waterheight.toFixed(2);
+    if(reservesChart.value.series[0].points.value > 550){ reservesChart.value.series[0].points.value -- ; }
+        else{ shift.value = true; }
+    
+    slider1.value = data.waterheight
+    
+    if (data.waterheight >= 77) {
+      fm.setPercentage(100);
+     
+      reservesChart.value.series[0].addPoint({ y: parseFloat(data.waterheight.toFixed(2)), x: data.timestamp*1000 }, true, shift.values); // Add new data point
+      reservesGauge.value.series[0].points[0].update(1000); // Add new data point
+    }
+    else if (data.waterheight <= 0) {
+      fm.setPercentage(0);
+      reservesChart.value.series[0].addPoint({ y: 0, x: data.timestamp*1000 }, true, shift.values); // Add new data point
+      reservesGauge.value.series[0].points[0].update(0); // Add new data point
+
+    }
+    else{
+      fm.setPercentage(data.percentage.toFixed(2));
+      reservesChart.value.series[0].addPoint({ y: parseFloat(data.waterheight.toFixed(2)), x: data.timestamp*1000  }, true, shift.values); // Add new data point
+      reservesGauge.value.series[0].points[0].update(parseFloat(data.reserve.toFixed(2)));}    
+
+      console.log(data.percentage);
+      if (data.percentage > 100 || data.percentage < 2) {
+          isActive.value = true;
+        } else {
+          isActive.value = false;
+        }
   });
   
   onMounted(() => {
