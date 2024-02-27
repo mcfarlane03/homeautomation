@@ -35,6 +35,19 @@
             subtitle="Capacity Remaining"
             align="center">
             <div id="container2"></div>
+            <v-dialog width="500" v-model="isActive">
+            <template v-slot:default="{ isActive }">
+              <v-card
+                title="Overflow Detected"
+                color="blue"
+                background-color="primary darken-1"
+              >
+              <v-card-actions>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
           </v-card>
         </v-sheet>
       </v-col>
@@ -50,7 +63,7 @@
   import Highcharts from "highcharts";
   import more from "highcharts/highcharts-more";
   import Exporting from "highcharts/modules/exporting";
-  import { withDirectives } from "vue";
+  // import { withDirectives } from "vue";
   Exporting(Highcharts);
   more(Highcharts);
   
@@ -59,7 +72,7 @@
   import { storeToRefs } from "pinia";
 
   
-  import { useAppStore } from "@/store/appStore";
+  // import { useAppStore } from "@/store/appStore";
   import { ref, reactive, watch, onMounted, onBeforeUnmount, computed, } from "vue";
   import { useRoute, useRouter } from "vue-router";
   
@@ -67,39 +80,25 @@
   const router = useRouter();
   const route = useRoute();
   const Mqtt = useMqttStore();
+  
   const { payload, payloadTopic } = storeToRefs(Mqtt);
   const host= ref("www.yanacreations.com");
   const port= ref(9002);
   const point= ref(10);
   const shift= ref(false);
-  const waterHeight= computed(()=>{
-    if(!!payload.value){
-      return '${payload.value.waterheight.toFixed(2)} inches';
-    }
-    }
-  );
-
-  const reServes= computed(()=>{
-    if(!!payload.value){
-      return '${payload.value.reserves.toFixed(2)} gallons';
-    }
-    }
-  );
 
   const percentage= computed(()=>{
     if(!!payload.value){
-      return '${payload.value.percentage.toFixed(2)}';
+      return `${payload.value.percentage.toFixed(2)}`;
     }
     }
   );
+
   const reservesChart = ref(null);
   const reservesGauge = ref(null);
   const slider1 = ref(50);
   var fm = new FluidMeter();
   // FUNCTIONS
-
-  function data (){
-      return {slider1: 50}}
   
   
   const CreateCharts = async () => {
@@ -118,7 +117,7 @@
       },
   
       tooltip: {
-        pointFormat: "Temperature: {point.y} °C",
+        pointFormat: "Water: {point.x} Gal <br/> Time: {point.y} ",
       },
       xAxis: {
         type: "datetime",
@@ -128,7 +127,7 @@
       series: [
         {
           name: "Water",
-          type: "column",
+          type: "area",
           data: [1],
           turboThreshold: 0,
           color: Highcharts.getOptions().colors[0],
@@ -143,6 +142,7 @@
               },},
     });
   
+    //Reserves Gauge
     reservesGauge.value = Highcharts.chart("container0", {
       title: { text: 'Water Reserves', align: 'left' },
       // the value axis
@@ -211,7 +211,7 @@
 
 
   watch(payload, (data) => {
-    fm.setPercentage(data.reserve.toFixed(2));
+    fm.setPercentage(data.percentage.toFixed(2));
     slider1.value = data.waterheight.toFixed(2);
   });
   
@@ -240,12 +240,12 @@
     reservesChart.value.series[0].setData([], true); // Clear previous data points
     
     if (data.reserve <= 0) {
-      reservesChart.value.series[0].addPoint({ y: 0, x: data.timestamp * 1000 }, true, shift.values); // Add new data point
-      reservesGauge.value.series[0].addPoint({ y: 0, x: data.timestamp * 1000 }, true, shift.values); // Add new data point
+      reservesChart.value.series[0].addPoint({ y: 0, x: data.timestamp * 1000 }, true, shift.value); // Add new data point
+      reservesGauge.value.series[0].addPoint({ y: 0, x: data.timestamp * 1000 }, true, shift.value); // Add new data point
     }
     else{
-      reservesChart.value.series[0].addPoint({ y: parseFloat(data.reserve.toFixed(2)), x: data.timestamp * 1000 }, true, shift.values); // Add new data point
-    reservesGauge.value.series[0].points[0].update(parseFloat(data.reserve.toFixed(2)));}
+      reservesChart.value.series[0].addPoint({ y: parseFloat(data.reserve.toFixed(2)), x: data.timestamp * 1000 }, true, shift.value); // Add new data point
+      reservesGauge.value.series[0].points[0].update(parseFloat(data.reserve.toFixed(2)));}
 });
 
       

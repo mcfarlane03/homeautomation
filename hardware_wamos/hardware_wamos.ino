@@ -9,14 +9,14 @@
    
 //**********ENTER IP ADDRESS OF SERVER******************//
 
-#define HOST_IP     "192.168.100.2"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     "172.16.192.98"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
 #define idNumber    "620156144"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "sandra"      // "REPLACE WITH YOUR WIFI's SSID"   
-#define password    "lui2nick"  // "REPLACE WITH YOUR WiFi's PASSWORD" 
+#define SSID        "MonaConnect"      // "REPLACE WITH YOUR WIFI's SSID"   
+#define password    ""  // "REPLACE WITH YOUR WiFi's PASSWORD" 
 
 #define stay        100
  
@@ -45,7 +45,7 @@ double getWaterHeight();
  
 
 SoftwareSerial esp(espRX, espTX); 
-NewPing sonar(TRIGGER_PIN, ECHO_PIN,1000); 
+NewPing sonar(TRIGGER_PIN, ECHO_PIN); 
 
  
 
@@ -148,5 +148,5 @@ void espInit(){
 //***** Design and implement all util functions below ******
 
 double calcReserve(float height){
-  return (M_PI * pow(rad,2) * height) / 231.0
+  return (M_PI * pow(rad,2) * height) / 231.0;
 }

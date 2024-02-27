@@ -113,7 +113,7 @@ export const useAppStore =  defineStore('app', ()=>{
 
                     let keys = Object.keys(data);
                     if (keys.includes('status')) {
-                        if(data["status"]=="complete"){
+                        if(data["status"]=="success"){
                             return data["data"];
                         }
                     if (data["status"]=="failed"){
@@ -142,7 +142,7 @@ export const useAppStore =  defineStore('app', ()=>{
                 const data = await response.json();
                 let keys = Object.keys(data);
                 if (keys.includes("status")) {
-                    if (data["status"] == "complete") {
+                    if (data["status"] == "success") {
                         console.log(data["data"]);
                         return data["data"];
                     }
