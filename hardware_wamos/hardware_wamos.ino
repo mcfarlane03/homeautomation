@@ -63,8 +63,8 @@ void setup(){
 void loop(){ 
    
   // send updates with schema ‘{"id": "student_id", "type": "ultrasonic", "radar": 0, "waterheight": 0, "reserve": 0, "percentage": 0}’
-  double radar = sonar.ping_in();
-  double waterHeight = radar - 16.737;
+  double radar = sonar.ping_in() - 16.737;
+  double waterHeight = max_height - radar;
 
   double reserve = calcReserve(waterHeight);
   double percentage = (waterHeight / max_height) * 100;
