@@ -9,13 +9,13 @@
    
 //**********ENTER IP ADDRESS OF SERVER******************//
 
-#define HOST_IP     "172.16.194.107"       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
+#define HOST_IP     ""       // REPLACE WITH IP ADDRESS OF SERVER ( IP ADDRESS OF COMPUTER THE BACKEND IS RUNNING ON) 
 #define HOST_PORT   "8080"            // REPLACE WITH SERVER PORT (BACKEND FLASK API PORT)
 #define route       "api/update"      // LEAVE UNCHANGED 
 #define idNumber    "620156144"       // REPLACE WITH YOUR ID NUMBER 
 
 // WIFI CREDENTIALS
-#define SSID        "MonaConnect"      // "REPLACE WITH YOUR WIFI's SSID"   
+#define SSID        ""      // "REPLACE WITH YOUR WIFI's SSID"   
 #define password    ""  // "REPLACE WITH YOUR WiFi's PASSWORD" 
 
 #define stay        100
