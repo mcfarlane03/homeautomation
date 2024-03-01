@@ -84,7 +84,7 @@ static const char* mqtt_server   = "www.yanacreations.com";         // Broker IP
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid       = "MonaConnect"; // Add your Wi-Fi ssid
+const char* ssid       = ""; // Add your Wi-Fi ssid
 const char* password   = ""; // Add your Wi-Fi password 
 
 
@@ -375,7 +375,7 @@ void checkPasscode(void){
     if(WiFi.status()== WL_CONNECTED){ 
       
       // 1. REPLACE LOCALHOST IN THE STRING BELOW WITH THE IP ADDRESS OF THE COMPUTER THAT YOUR BACKEND IS RUNNING ON
-      http.begin(client, "http://172.16.194.107:8080/api/check/combination"); // Your Domain name with URL path or IP address with path 
+      http.begin(client, "http://localhost:8080/api/check/combination"); // Your Domain name with URL path or IP address with path 
  
       
       http.addHeader("Content-Type", "application/x-www-form-urlencoded"); // Specify content-type header      
